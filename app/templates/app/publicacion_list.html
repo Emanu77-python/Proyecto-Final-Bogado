@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block main %}
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Publicaciones</title>
     <link rel="stylesheet" href="{% static 'app/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/other_styles.css' %}"> <!-- Asegúrate de tener este enlace -->
 </head>
 <body>
     <h1>Lista de Publicaciones</h1>
@@ -18,30 +18,31 @@
         {% for publicacion in publicaciones %}
             <li>
                 <h2>{{ publicacion.titulo }}</h2>
-                <p>{{ publicacion.contenido }}</p>
+                <p>{{ publicacion.contenido|truncatewords:30 }}</p> <!-- Muestra una parte del contenido como adelanto -->
+                
                 {% if publicacion.imagen %}
                     <img src="{{ publicacion.imagen.url }}" alt="{{ publicacion.titulo }}" style="max-width: 300px;">
                 {% else %}
                     <p>No hay imagen disponible.</p>
                 {% endif %}
                 
-                <!-- Botón para ver más detalles -->
-                <a href="{% url 'detalle_publicacion' publicacion.id %}" class="btn btn-info">Ver más detalles</a>
-                
+                <a href="{% url 'publicacion_detail' publicacion.id %}" class="btn btn-primary">Ver Detalles</a>
                 {% if user.is_superuser %}
-                    <!-- Botón para editar publicación -->
-                    <a href="{% url 'editar_publicacion' publicacion.id %}" class="btn btn-warning">Editar</a>
-
-                    <!-- Botón para borrar publicación -->
-                    <form action="{% url 'borrar_publicacion' publicacion.id %}" method="POST" style="display:inline;">
+                    <a href="{% url 'publicacion_update' publicacion.id %}" class="btn btn-edit">Editar</a>
+                    <form action="{% url 'publicacion_delete' publicacion.id %}" method="post" style="display:inline;" onsubmit="return confirmDeletion();">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar esta publicación?');">Borrar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
                     </form>
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
+
+    <script>
+        function confirmDeletion() {
+            return confirm("¿Estás seguro de que quieres borrar esta publicación?");
+        }
+    </script>
 </body>
 </html>
-
 {% endblock main %}

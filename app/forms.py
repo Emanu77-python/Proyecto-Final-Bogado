@@ -1,12 +1,7 @@
 from django import forms
 from .models import Publicacion
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
-class CustomUserCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2')
+from django.contrib.auth.forms import  AuthenticationForm
 
 class CustomAuthenticationForm(AuthenticationForm):
     class Meta:
@@ -17,8 +12,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 class PublicacionForm(forms.ModelForm):
     class Meta:
         model = Publicacion
-        fields = ['titulo', 'subtitulo', 'contenido', 'imagen']  # El campo 'creador' no se incluye aquí
-
+        fields = ['titulo', 'subtitulo', 'contenido', 'imagen']  
         widgets = {
             'titulo': forms.TextInput(attrs={
                 'placeholder': 'Ej: La mejor jugada de mi vida...',

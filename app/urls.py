@@ -11,8 +11,9 @@ urlpatterns = [
     path('crear/', crear_publicacion, name='crear_publicacion'),
     path('publicaciones/', PublicacionListView.as_view(), name='publicacion_list'),
     path('publicacion/<int:pk>/', PublicacionDetailView.as_view(), name='publicacion_detail'),
-    path('publicacion/<int:pk>/editar/', PublicacionUpdateView.as_view(), name='publicacion_edit'),
-    path('publicacion/<int:pk>/borrar/', PublicacionDeleteView.as_view(), name='publicacion_delete'),   
+    path('publicacion/<int:pk>/editar/', PublicacionUpdateView.as_view(), name='publicacion_update'),
+    path('publicacion/<int:pk>/borrar/', PublicacionDeleteView.as_view(), name='publicacion_delete'),
+
     path('login/', login_view, name='login_view'),
     path('signup/', signup_view, name='signup_view'),
     path('logout/', logout_view, name='logout_view'),

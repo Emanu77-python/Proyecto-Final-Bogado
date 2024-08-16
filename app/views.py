@@ -1,25 +1,16 @@
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, DeleteView, UpdateView
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.shortcuts import redirect, render
+from django.views.generic import ListView, DeleteView, UpdateView, DetailView
 from .models import Publicacion
 from .forms import PublicacionForm
-from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.contrib.auth import logout
-from django.contrib.auth import login as auth_login
-from django.views.generic import DetailView
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth import  login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import logout, login as auth_login
 from django.urls import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 
-
-
-
-#Create your views here
-
-
+def is_superuser(user):
+    return user.is_superuser
 
 def inicio(request):
     return render(request, 'app/index.html', {
@@ -40,10 +31,9 @@ def crear_publicacion(request):
                 publicacion = form.save(commit=False)
                 publicacion.creador = request.user
                 publicacion.save()
-                return redirect('publicacion_list')  # Redirige a la vista que desees
+                return redirect('publicacion_list')
         else:
             form = PublicacionForm()
-
         return render(request, 'app/crear_publicacion.html', {'form': form})
     else:
         login_url = reverse('login_view')
@@ -55,37 +45,35 @@ class PublicacionListView(ListView):
     template_name = 'publicacion_list.html'  
     context_object_name = 'publicaciones'
 
-class PublicacionDetailView(LoginRequiredMixin, DetailView):
+class PublicacionDetailView(DetailView):
     model = Publicacion
-    template_name = 'detalle_publicacion.html'  # Asegúrate de tener este template
+    template_name = 'app/publicacion_detail.html'
     context_object_name = 'publicacion'
 
-class PublicacionUpdateView(UpdateView):
+class PublicacionUpdateView(UserPassesTestMixin, UpdateView):
     model = Publicacion
-    fields = ['titulo', 'contenido', 'imagen']
-    template_name = 'editar_publicacion.html'  # Asegúrate de tener este template
+    fields = ['titulo', 'subtitulo', 'contenido', 'imagen']
+    template_name = 'app/publicacion_view.html'  
+    sucess_url = reverse_lazy("/")
 
+    def test_func(self):
+        return self.request.user.is_superuser
 
 class PublicacionDeleteView(UserPassesTestMixin, DeleteView):
     model = Publicacion
     template_name = 'app/publicacion_confirm_delete.html'
     success_url = reverse_lazy('publicacion_list')
 
-    
     def test_func(self):
         return self.request.user.is_superuser
-
-    
-    def handle_no_permission(self):
-        return redirect('publicacion_list')
 
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
-            return redirect('/')  
+            auth_login(request, user)
+            return redirect('/')
     else:
         form = AuthenticationForm()
 
@@ -96,8 +84,8 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user) 
-            return redirect('/') 
+            auth_login(request, user)
+            return redirect('/')
     else:
         form = UserCreationForm()
     return render(request, 'app/signup.html', {'form': form})
