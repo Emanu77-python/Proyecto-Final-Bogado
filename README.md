@@ -1,4 +1,4 @@
-Proyecto Final Bogado
+Proyecto Final Bogado:
 Este es un proyecto de blog orientado a juegos desarrollado con Django. El objetivo es proporcionar una plataforma donde los usuarios puedan crear, editar, y ver publicaciones relacionadas con juegos.
 
 Funcionalidades:
@@ -7,9 +7,9 @@ Autenticación de Usuarios: Los usuarios pueden registrarse e iniciar sesión pa
 
 Creación de Publicaciones: Los usuarios autenticados pueden crear nuevas publicaciones sobre juegos, incluyendo un subtítulo y detalles sobre el creador.
 
-Lista de Publicaciones: Visualiza una lista de todas las publicaciones disponibles.
+publicacion_list: Visualiza una lista de todas las publicaciones disponibles.
 
-Detalles de Publicación: Cada publicación tiene una página de detalles que muestra el contenido completo.
+publicacion_detail: Cada publicación tiene una página de detalles que muestra el contenido completo.
 
 publicacion_view: Los creadores pueden editar sus propias publicaciones.
 
