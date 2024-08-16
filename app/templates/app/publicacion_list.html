@@ -1,4 +1,4 @@
-{% extends "app/index.html" %} 
+{% extends "app/index.html" %}
 
 {% load static %}
 
@@ -23,6 +23,20 @@
                     <img src="{{ publicacion.imagen.url }}" alt="{{ publicacion.titulo }}" style="max-width: 300px;">
                 {% else %}
                     <p>No hay imagen disponible.</p>
+                {% endif %}
+                
+                <!-- Botón para ver más detalles -->
+                <a href="{% url 'detalle_publicacion' publicacion.id %}" class="btn btn-info">Ver más detalles</a>
+                
+                {% if user.is_superuser %}
+                    <!-- Botón para editar publicación -->
+                    <a href="{% url 'editar_publicacion' publicacion.id %}" class="btn btn-warning">Editar</a>
+
+                    <!-- Botón para borrar publicación -->
+                    <form action="{% url 'borrar_publicacion' publicacion.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas borrar esta publicación?');">Borrar</button>
+                    </form>
                 {% endif %}
             </li>
         {% endfor %}

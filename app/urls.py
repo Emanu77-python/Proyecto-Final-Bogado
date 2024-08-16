@@ -7,13 +7,16 @@ from .views import *
 
 urlpatterns = [
     path('', inicio),
-    path('crear/', views.crear_publicacion, name='crear_post'),
+    path('about-me/', about_me_view, name='about_me'),
+    path('crear/', crear_publicacion, name='crear_publicacion'),
     path('publicaciones/', PublicacionListView.as_view(), name='publicacion_list'),
-    path('publicaciones/<int:pk>/editar/', PublicacionUpdateView.as_view(), name='publicacion-editar'),
-    path('publicaciones/<int:pk>/eliminar/', PublicacionDeleteView.as_view(), name='publicacion-eliminar'),
+    path('publicacion/<int:pk>/', PublicacionDetailView.as_view(), name='publicacion_detail'),
+    path('publicacion/<int:pk>/editar/', PublicacionUpdateView.as_view(), name='publicacion_edit'),
+    path('publicacion/<int:pk>/borrar/', PublicacionDeleteView.as_view(), name='publicacion_delete'),   
     path('login/', login_view, name='login_view'),
     path('signup/', signup_view, name='signup_view'),
     path('logout/', logout_view, name='logout_view'),
+    path('inicio-no-autenticado/', inicio_no_autenticado, name='inicio_no_autenticado'),
 ]
 
 if settings.DEBUG:

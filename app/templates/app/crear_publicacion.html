@@ -1,30 +1,74 @@
-{% extends "app/index.html"%}
+{% extends "app/index.html" %}
+
+{% load static %}
 
 {% block main %}
-
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Publicación</title>
+    <link rel="stylesheet" href="{% static 'app/css/styles.css' %}">
+    <style>
+        label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        textarea::placeholder, input::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        .message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Crear Nueva Publicación</h1>
+    <h1>Crear Publicación</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
 
-        <!-- Botón para abrir el selector de archivos -->
-        <label for="id_imagen" class="btn btn-secondary" id="upload_button">Subir Imagen</label>
-        <input type="file" name="imagen" id="id_imagen" style="display: none;" onchange="previewImage(event)">
-
-        <!-- Vista previa de la imagen -->
-        <div class="mt-3" id="image_container" style="display: none;">
-            <img id="image_preview" src="#" alt="Vista previa de la imagen">
+        <div class="form-field">
+            <label for="{{ form.titulo.id_for_label }}">Título:</label><br>
+            {{ form.titulo }}
         </div>
 
-        <!-- Botón para enviar el formulario -->
-        <button type="submit" class="btn mt-3">Publicar</button>
+        <div class="form-field">
+            <label for="{{ form.subtitulo.id_for_label }}">Subtítulo:</label><br>
+            {{ form.subtitulo }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.contenido.id_for_label }}">Contenido:</label><br>
+            {{ form.contenido }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.imagen.id_for_label }}">Subir imagen:</label><br>
+            {{ form.imagen }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Publicar</button>
     </form>
 </body>
 </html>
-
 {% endblock main %}

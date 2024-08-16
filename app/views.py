@@ -1,57 +1,94 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, UpdateView, DeleteView
+from django.views.generic import ListView, DeleteView, UpdateView
 from .models import Publicacion
 from .forms import PublicacionForm
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
 from django.contrib.auth import login as auth_login
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from django.views.generic import DetailView
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth import  login
+from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 
 
 
 #Create your views here
 
 
+
 def inicio(request):
-    return render(request, "app/index.html")
+    return render(request, 'app/index.html', {
+        'es_superusuario': request.user.is_superuser
+    })
+
+def about_me_view(request):
+    return render(request, 'app/about_me.html')  
+
+def inicio_no_autenticado(request):
+    return render(request, 'app/inicio_no_autenticado.html')
 
 def crear_publicacion(request):
-    if request.method == 'POST':
-        form = PublicacionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('crear_post')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = PublicacionForm(request.POST, request.FILES)
+            if form.is_valid():
+                publicacion = form.save(commit=False)
+                publicacion.creador = request.user
+                publicacion.save()
+                return redirect('publicacion_list')  # Redirige a la vista que desees
+        else:
+            form = PublicacionForm()
+
+        return render(request, 'app/crear_publicacion.html', {'form': form})
     else:
-        form = PublicacionForm()
-    
-    return render(request, 'app/crear_publicacion.html', {'form': form})
+        login_url = reverse('login_view')
+        messages.info(request, f"Necesitas iniciar sesión para crear una publicación. Inicia sesión <a href='{login_url}'>aquí</a>.")
+        return redirect('inicio_no_autenticado')
 
 class PublicacionListView(ListView):
     model = Publicacion
-    template_name = 'posts_list.html'
+    template_name = 'publicacion_list.html'  
     context_object_name = 'publicaciones'
+
+class PublicacionDetailView(LoginRequiredMixin, DetailView):
+    model = Publicacion
+    template_name = 'detalle_publicacion.html'  # Asegúrate de tener este template
+    context_object_name = 'publicacion'
 
 class PublicacionUpdateView(UpdateView):
     model = Publicacion
-    form_class = PublicacionForm
-    template_name = 'publicacion_form.html'
-    success_url = reverse_lazy('publicacion-listar')
+    fields = ['titulo', 'contenido', 'imagen']
+    template_name = 'editar_publicacion.html'  # Asegúrate de tener este template
 
-class PublicacionDeleteView(DeleteView):
+
+class PublicacionDeleteView(UserPassesTestMixin, DeleteView):
     model = Publicacion
-    template_name = 'publicacion_confirm_delete.html'
-    success_url = reverse_lazy('publicacion-listar')
+    template_name = 'app/publicacion_confirm_delete.html'
+    success_url = reverse_lazy('publicacion_list')
+
+    
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    
+    def handle_no_permission(self):
+        return redirect('publicacion_list')
 
 def login_view(request):
     if request.method == 'POST':
-        form = CustomAuthenticationForm(request, data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            auth_login(request, user)
+            login(request, user)
             return redirect('/')  
     else:
-        form = CustomAuthenticationForm()
+        form = AuthenticationForm()
+
     return render(request, 'app/login.html', {'form': form})
 
 def signup_view(request):

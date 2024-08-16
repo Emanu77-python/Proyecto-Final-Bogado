@@ -1,0 +1,38 @@
+{% extends "app/index.html" %}
+
+{% load static %}
+
+{% block main %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ object.titulo }}</title>
+    <link rel="stylesheet" href="{% static 'app/css/styles.css' %}">
+</head>
+<body>
+    <h1>{{ object.titulo }}</h1>
+    <p>{{ object.contenido }}</p>
+    {% if object.imagen %}
+        <img src="{{ object.imagen.url }}" alt="{{ object.titulo }}" style="max-width: 300px;">
+    {% else %}
+        <p>No hay imagen disponible.</p>
+    {% endif %}
+
+    <!-- Botones de acción -->
+    <div class="acciones">
+        {% if request.user.is_authenticated %}
+            {% if request.user.is_superuser %}
+                <a href="{% url 'editar_publicacion' object.pk %}" class="btn btn-secondary">Editar</a>
+                <form method="POST" action="{% url 'eliminar_publicacion' object.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        <a href="{% url 'publicacion_list' %}" class="btn btn-primary">Volver a la lista</a>
+    </div>
+</body>
+</html>
+{% endblock main %}
