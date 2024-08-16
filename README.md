@@ -3,9 +3,17 @@ Este es un proyecto de blog orientado a juegos desarrollado con Django. El objet
 
 Funcionalidades:
 
-Autenticación de Usuarios: Los usuarios pueden registrarse e iniciar sesión para acceder a funcionalidades exclusivas.
+index.html: la base de todo , en si la pagina web.
 
-Creación de Publicaciones: Los usuarios autenticados pueden crear nuevas publicaciones sobre juegos, incluyendo un subtítulo y detalles sobre el creador.
+inicio_no_autenticado:un mensaje para cuando entres a crear/ osea la pagina para crear publicaciones y no estes autenticado: " Necesitas iniciar sesión para crear una publicación. Inicia sesión aquí".
+
+sign_up: html para registrarse.
+
+login: html para logearse (iniciar sesion)
+
+about_me: un html que cuenta cosas sobre mí.
+
+crear_publicacion: Los usuarios autenticados pueden crear nuevas publicaciones sobre juegos, incluyendo un subtítulo y detalles sobre el creador.
 
 publicacion_list: Visualiza una lista de todas las publicaciones disponibles.
 
