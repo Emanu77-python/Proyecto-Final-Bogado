@@ -25,6 +25,8 @@ publicacion_confirm_delete: Una confirmacion para advertir a los super user de b
 
 other_styles.css: Utiliza un archivo de estilos (other_styles.css) para la apariencia del blog.
 
+carpeta "media": una carpeta para guardar las imagenes puestas en las publicaciones.
+
 
 Instalación
 Clona el repositorio:
